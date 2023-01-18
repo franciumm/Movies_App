@@ -5,6 +5,7 @@ import 'package:movies/Modules/WatchList/WatchList_Screen.dart';
 
 import 'Home Screen/Home_Screen.dart';
 
+//hello!
 class MainLayout extends StatefulWidget {
   @override
   State<MainLayout> createState() => _MainLayout();
@@ -19,6 +20,7 @@ class _MainLayout extends State<MainLayout> {
     WatchListScreen()
   ];
   int selectedIndex = 0;
+
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
