@@ -19,7 +19,7 @@ class _MainLayout extends State<MainLayout> {
     WatchListScreen()
   ];
 
-  int _selectedIndex = 0;
+
   int selectedIndex = 0;
   Widget build(BuildContext context) {
     return Scaffold(
