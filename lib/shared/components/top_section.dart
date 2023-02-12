@@ -14,7 +14,7 @@ class TopSection extends StatelessWidget {
         Stack(alignment: Alignment.center, children: [
           Container(
             width: double.infinity,
-            height: 289,
+            height: 249,
             child: Image.network(
                 fit: BoxFit.fill,
                 'https://m.media-amazon.com/images/M/MV5BMTMxMTU5MTY4MV5BMl5BanBnXkFtZTcwNzgyNjg2NQ@@._V1_.jpg'),
@@ -26,7 +26,7 @@ class TopSection extends StatelessWidget {
           ),
         ]),
         Padding(
-          padding: const EdgeInsets.only(left: 15.0, top: 190),
+          padding: const EdgeInsets.only(left: 15.0, top: 140),
           child: Row(
             children: [
               Film_Item(

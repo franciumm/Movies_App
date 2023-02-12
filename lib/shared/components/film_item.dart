@@ -27,15 +27,12 @@ class _Film_ItemState extends State<Film_Item> {
           height: 199,
           widget.img,
         ),
-        Container(
-          padding: const EdgeInsets.all(0.0),
-          width: 30.0, // you can adjust the width as you need
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: InkWell(
-              onTap: () {},
-              child: WishList,
-            ),
+        InkWell(
+          onTap: () {},
+          child: ImageIcon(
+            color: GREY_COLOR,
+            AssetImage('lib/assets/Photos/bookmark.png'),
+            size: 34,
           ),
         ),
       ],
