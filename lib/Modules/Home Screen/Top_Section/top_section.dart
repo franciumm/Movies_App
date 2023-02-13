@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:movies/shared/styles/my_theme.dart';
 
-import '../styles/colors.dart';
-import 'film_item.dart';
+import '../../../shared/styles/colors.dart';
+import '../../../shared/components/film_item.dart';
 
 class TopSection extends StatelessWidget {
   const TopSection({Key? key}) : super(key: key);

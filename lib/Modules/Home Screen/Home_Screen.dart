@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:movies/shared/components/top_section.dart';
+import 'package:movies/Modules/Home%20Screen/New_Releases/new_releases.dart';
+import 'package:movies/Modules/Home%20Screen/Top_Section/top_section.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -7,7 +8,13 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Column(
-        children: [TopSection()],
+        children: [
+          TopSection(),
+          SizedBox(
+            height: 25,
+          ),
+          newrles(),
+        ],
       ),
     );
   }
