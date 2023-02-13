@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../shared/styles/colors.dart';
 import '../../../shared/components/film_item.dart';
 
 class TopSection extends StatelessWidget {
@@ -13,7 +12,7 @@ class TopSection extends StatelessWidget {
         Stack(alignment: Alignment.center, children: [
           Container(
             width: double.infinity,
-            height: 249,
+            height: 200,
             child: Image.network(
                 fit: BoxFit.fill,
                 'https://m.media-amazon.com/images/M/MV5BMTMxMTU5MTY4MV5BMl5BanBnXkFtZTcwNzgyNjg2NQ@@._V1_.jpg'),
@@ -25,7 +24,7 @@ class TopSection extends StatelessWidget {
           ),
         ]),
         Padding(
-          padding: const EdgeInsets.only(left: 15.0, top: 140),
+          padding: const EdgeInsets.only(left: 15.0, top: 85),
           child: Row(
             children: [
               Film_Item(
@@ -33,15 +32,19 @@ class TopSection extends StatelessWidget {
               Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(top: 90.0, left: 20),
+                    padding: EdgeInsets.only(top: 95.0, left: 20),
                     child: Text(
                       'Puss in Boots',
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
-                  Text(
-                    '2022 1h 58m',
-                    style: TextStyle(color: GREY_COLOR),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 7.0),
+                    child: Text(
+                      '2022 1h 58m',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onBackground),
+                    ),
                   )
                 ],
               )

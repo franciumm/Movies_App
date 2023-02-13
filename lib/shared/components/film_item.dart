@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../styles/colors.dart';
-
 class Film_Item extends StatefulWidget {
   String img;
   Film_Item(this.img);
@@ -24,14 +22,12 @@ class _Film_ItemState extends State<Film_Item> {
             widget.img,
           ),
         ),
-        Positioned(
-          left: -4,
-          child: InkWell(
-            onTap: () {},
-            child: ImageIcon(
-              color: GREY_COLOR,
-              AssetImage('lib/assets/Photos/bookmark.png'),
-              size: 34,
+        InkWell(
+          onTap: () {},
+          child: Container(
+            height: 29,
+            child: Image.asset(
+              'lib/assets/Photos/bookmark.png',
             ),
           ),
         ),
