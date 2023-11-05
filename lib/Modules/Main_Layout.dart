@@ -31,6 +31,7 @@ class _MainLayout extends State<MainLayout> {
             highlightColor: Colors.transparent,
           ),
           child: BottomNavigationBar(
+              elevation: 100,
               currentIndex: selectedIndex,
               onTap: onItemTapped,
               type: BottomNavigationBarType.fixed,
