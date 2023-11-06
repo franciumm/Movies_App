@@ -4,7 +4,7 @@ import 'package:movies/shared/styles/colors.dart';
 class MyThemeData {
   static ThemeData lightTheme = ThemeData(
       primaryColor: PRIMARY_COLOR,
-      backgroundColor: PRIMARY_COLOR,
+
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: BtmNAVBck,
           unselectedItemColor: ItemsClr,
@@ -27,8 +27,6 @@ class MyThemeData {
           background: PRIMARY_COLOR,
           onBackground: GREY_COLOR,
           surface: GREY_COLOR,
-          onSurface: PRIMARY_COLOR),
-      textTheme: TextTheme(
-          headline1: TextStyle(
-              color: ItemsClr, fontSize: 17, fontWeight: FontWeight.w400)));
+          onSurface: PRIMARY_COLOR,onPrimaryContainer: TextBack),
+ );
 }
