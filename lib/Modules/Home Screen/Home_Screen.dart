@@ -21,7 +21,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: MediaQuery.of(context).size.height* (40/580)),
                 const newrles(),
                 SizedBox(height: MediaQuery.of(context).size.height* (30/580)),
-                const recomended(),
+                const Recommended(),
                 SizedBox(
                     height: MediaQuery.of(context).size.height* (60/580)
                 ),
