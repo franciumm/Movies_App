@@ -1,47 +1,81 @@
+// lib/screens/top_section.dart
+
 import 'dart:math';
 import 'package:flutter/material.dart';
+
+import '../../../models/movie.dart';
+import '../../../services/api_services.dart';
 import '../../../shared/components/film_item.dart';
+import '../../../shared/styles/colors.dart';
 
-class TopSection extends StatelessWidget {
-  const TopSection({Key? key}) : super(key: key);
+class TopSection extends StatefulWidget {
+  const TopSection({super.key});
 
-  static const double backgroundAspect = 16 / 9;
-  static const double posterAspect = 2 / 3;
-  static const double posterHeightFraction = 0.6; // 60% of bg height
-  static const double horizontalPadding = 16.0;
+  @override
+  _TopSectionState createState() => _TopSectionState();
+}
+
+class _TopSectionState extends State<TopSection> {
+  late Future<Movie> _futureTopMovie;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureTopMovie = ApiService
+        .fetchPopular(page: 1)
+        .then((resp) => resp.results.first);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final maxBgHeight = screenHeight / 3; // cap to 1/3 screen
+    // cap the background to 1/3 of screen height
+    final screenH = MediaQuery.of(context).size.height;
+    final maxBgH = screenH / 3;
 
-    return LayoutBuilder(builder: (context, constraints) {
-      final width = constraints.maxWidth;
-      // Compute background height 16:9 and cap
-      final calculatedBgHeight = width / backgroundAspect;
-      final bgHeight = min(calculatedBgHeight, maxBgHeight);
+    return FutureBuilder<Movie>(
+      future: _futureTopMovie,
+      builder: (ctx, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          // placeholder size matches what our final layout will be
+          return SizedBox(
+            height: maxBgH,
+            child: const Center(child: CircularProgressIndicator()),
+          );
+        } else if (snap.hasError) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text('Error: ${snap.error}'),
+          );
+        }
 
-      // Poster dimensions relative to bg height
-      final posterHeight = bgHeight * posterHeightFraction;
-      final posterWidth = posterHeight * posterAspect;
-      final posterOffset = bgHeight - (posterHeight / 2);
+        final movie = snap.data!;
+        final width = MediaQuery.of(context).size.width;
 
-      return SizedBox(
-        width: width,
-        // total height = bg + half poster below + padding
-        height: bgHeight + (posterHeight / 2) + horizontalPadding,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            // Background + icon confined
-            SizedBox(
-              width: width,
-              height: bgHeight,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
+        // compute background size
+        const bgAspect = 16 / 9;
+        final calcBgH = width / bgAspect;
+        final bgH = min(calcBgH, maxBgH);
+
+        // poster size is 60% of bg height, 2:3 ratio
+        const posterFraction = 0.6;
+        const posterAspect = 2 / 3;
+        final posterH = bgH * posterFraction;
+        final posterW = posterH * posterAspect;
+        final posterTop = bgH - (posterH / 2);
+
+        return SizedBox(
+          width: width,
+          height: bgH + (posterH / 2) + 16,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // background image + play icon + title overlaid
+              SizedBox(
+                width: width,
+                height: bgH,
+                child: Stack(fit: StackFit.expand, children: [
                   Image.network(
-                    'https://m.media-amazon.com/images/M/MV5BMTMxMTU5MTY4MV5BMl5BanBnXkFtZTcwNzgyNjg2NQ@@._V1_.jpg',
+                    movie.fullBackdropUrl,
                     fit: BoxFit.cover,
                   ),
                   const Center(
@@ -51,54 +85,27 @@ class TopSection extends StatelessWidget {
                       color: Colors.white70,
                     ),
                   ),
-                ],
+
+                ]),
               ),
-            ),
-            // Poster overlapping background
-            Positioned(
-              left: horizontalPadding,
-              top: posterOffset,
-              child: SizedBox(
-                width: posterWidth,
-                height: posterHeight,
-                child: FilmItem(
-                  title: 'Avengers: Endgame',
-                  time: '',
-                  rate: 4.0,
-                  showInfo: false,
-                  width: posterWidth,
-                  height: posterHeight,
-                  imageUrl:
-                  'https://m.media-amazon.com/images/M/MV5BMTMxMTU5MTY4MV5BMl5BanBnXkFtZTcwNzgyNjg2NQ@@._V1_.jpg',
-                  initialInWatchlist: false,
-                ),
-              ),
-            ),
-            // Title and metadata aligned with poster
-            Positioned(
-              left: horizontalPadding + posterWidth + horizontalPadding,
-              top:   bgHeight,
-              child: SizedBox(
-                width: width - posterWidth - horizontalPadding * 3,
+              Padding(
+                padding:  EdgeInsets.only(left: posterW*1.5),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Puss in Boots',
+                      movie.title,
                       style: Theme.of(context)
                           .textTheme
                           .titleLarge
                           ?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '2022 • 1h 58m',
+                      movie.releaseDate,
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium
@@ -107,10 +114,29 @@ class TopSection extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-          ],
-        ),
-      );
-    });
+              // overlapping poster
+              Positioned(
+                left: 16,
+                top: posterTop,
+                child: SizedBox(
+                  width: posterW,
+                  height: posterH,
+                  child: FilmItem(
+                    title: movie.title,
+                    time: movie.releaseDate,
+                    rate: movie.voteAverage,
+                    showInfo: false,
+                    width: posterW,
+                    height: posterH,
+                    imageUrl: movie.fullPosterUrl,
+                    initialInWatchlist: false,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
