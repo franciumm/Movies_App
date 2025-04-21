@@ -7,12 +7,13 @@ import 'Home Screen/Home_Screen.dart';
 
 //hello!
 class MainLayout extends StatefulWidget {
+  const MainLayout({super.key});
+
   @override
   State<MainLayout> createState() => _MainLayout();
 }
 
 class _MainLayout extends State<MainLayout> {
-  @override
   List<Widget> body = [
     HomeScreen(),
     SearchScreen(),

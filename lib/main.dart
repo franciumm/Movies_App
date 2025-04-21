@@ -4,10 +4,12 @@ import 'package:movies/shared/styles/my_theme.dart';
 import 'Modules/Main_Layout.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp( MyApp());
 }
 
 class MyApp extends StatelessWidget {
+
+
 
   @override
   Widget build(BuildContext context) {

@@ -11,7 +11,7 @@ class Film_Item extends StatefulWidget {
   bool wishlist;
   double width;
   double height;
-  Film_Item(this.Title,this.Time,this.Rate, this.IsInfo ,this.width,this.height,this.img, this.wishlist);
+  Film_Item(this.Title,this.Time,this.Rate, this.IsInfo ,this.width,this.height,this.img, this.wishlist, {super.key});
 
   @override
   State<Film_Item> createState() => _Film_ItemState();
