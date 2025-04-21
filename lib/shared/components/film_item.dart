@@ -43,6 +43,19 @@ class _FilmItemState extends State<FilmItem> {
 
   @override
   Widget build(BuildContext context) {
+    Widget poster;
+    if (widget.imageUrl.isNotEmpty) {
+      poster = Image.network(
+        widget.imageUrl,
+        width: widget.width,
+        height: widget.height,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _placeholder(),
+      );
+    } else {
+      poster = _placeholder();
+    }
+
     return Center(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(6),
@@ -52,19 +65,15 @@ class _FilmItemState extends State<FilmItem> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Poster + bookmark icon flush
+              // Poster + bookmark icon
               Stack(
                 children: [
-                  Image.network(
-                    widget.imageUrl,
-                    width: widget.width,
-                    height: widget.height,
-                    fit: BoxFit.cover,
-                  ),
+                  poster,
                   Align(
                     alignment: Alignment.topRight,
                     child: InkWell(
-                      onTap: () => setState(() => _inWatchlist = !_inWatchlist),
+                      onTap: () =>
+                          setState(() => _inWatchlist = !_inWatchlist),
                       child: Image.asset(
                         _inWatchlist
                             ? 'lib/assets/Photos/donebookmark.png'
@@ -92,7 +101,9 @@ class _FilmItemState extends State<FilmItem> {
                           Icon(
                             Icons.star,
                             size: 14,
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary,
                           ),
                           const SizedBox(width: 4),
                           Text(
@@ -122,6 +133,19 @@ class _FilmItemState extends State<FilmItem> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _placeholder() {
+    return Container(
+      width: widget.width,
+      height: widget.height,
+      color: Colors.grey[800],
+      child: const Icon(
+        Icons.image_not_supported,
+        color: Colors.white54,
+        size: 40,
       ),
     );
   }

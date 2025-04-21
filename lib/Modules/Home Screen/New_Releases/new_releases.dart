@@ -1,10 +1,12 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:movies/shared/components/film_item.dart';
-import 'package:movies/shared/styles/colors.dart';
+import '../../../models/movie.dart';
+import '../../../services/api_services.dart';
+import '../../../shared/components/film_item.dart';
+import '../../../shared/styles/colors.dart';
 
-class newrles extends StatelessWidget {
+class newrles extends StatefulWidget {
   const newrles({super.key});
-
 
   static const _itemsPerRow = 3;
   static const _horizontalPadding = 16.0;
@@ -13,63 +15,93 @@ class newrles extends StatelessWidget {
   static const _aspectRatio = 2 / 3;
 
   @override
+  State<newrles> createState() => _newrlesState();
+}
+
+class _newrlesState extends State<newrles> {
+  late Future<Movie> _futureLatest;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureLatest = ApiService.fetchLatest();
+
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       color: GREY_COLOR,
       padding: const EdgeInsets.symmetric(vertical: 10),
-      child: LayoutBuilder(builder: (context, constraints) {
-        final available =
-            constraints.maxWidth - (_horizontalPadding * 2);
-        double itemWidth = (available / _itemsPerRow)
-            .clamp(_minItemWidth, _maxItemWidth);
-        final itemHeight = itemWidth / _aspectRatio;
+      child: FutureBuilder<Movie>(
+        future: _futureLatest,
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return SizedBox(
+              height: 200,
+              child: const Center(child: CircularProgressIndicator()),
+            );
+          } else if (snapshot.hasError) {
+            return SizedBox(
+              height: 200,
+              child: Center(child: Text('Error: \${snapshot.error}')),
+            );
+          }
 
+          final movie = snapshot.data!;
 
-        final cardHeight = itemHeight*0.9 + FilmItem.infoHeight(context);
+          return LayoutBuilder(builder: (context, constraints) {
+            final available =
+                constraints.maxWidth - (newrles._horizontalPadding * 2);
+            double itemWidth = (available / newrles._itemsPerRow)
+                .clamp(newrles._minItemWidth, newrles._maxItemWidth);
+            final itemHeight = itemWidth / newrles._aspectRatio;
 
-        return Column(
+            final cardHeight = itemHeight * 0.9 + FilmItem.infoHeight(context);
 
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding:
-              const EdgeInsets.symmetric(horizontal: _horizontalPadding
-              ),
-              child: Text(
-                'New Releases',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontSize: itemHeight*0.09,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: newrles._horizontalPadding),
+                  child: Text(
+                    'New Releases',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(
+                      fontSize: itemHeight * 0.09,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(
-              height: cardHeight,
-              child: ListView.separated(
-                padding: const EdgeInsets.only(left: _horizontalPadding),
-                scrollDirection: Axis.horizontal,
-                itemCount: 10,
-                separatorBuilder: (_, __) =>
-                const SizedBox(width: _horizontalPadding),
-                itemBuilder: (_, index) => FilmItem(
-                  title: 'Movie $index',
-                  time: '2024',
-                  rate: 4.0,
-                  showInfo: false,
-                  width: itemWidth,
-                  height: itemHeight,
-                  imageUrl:
-                  'https://m.media-amazon.com/images/M/MV5BMTMxMTU5MTY4MV5BMl5BanBnXkFtZTcwNzgyNjg2NQ@@._V1_.jpg',
-                  initialInWatchlist: false,
+                SizedBox(
+                  height: cardHeight,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.only(
+                        left: newrles._horizontalPadding),
+                    children: [
+                      FilmItem(
+                        title: movie.title,
+                        time: movie.releaseDate,
+                        rate: movie.voteAverage,
+                        showInfo: false,
+                        width: itemWidth,
+                        height: itemHeight,
+                        imageUrl: movie.fullPosterUrl,
+                        initialInWatchlist: false,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ),
-          ],
-        );
-      }),
+              ],
+            );
+          });
+        },
+      ),
     );
   }
 }

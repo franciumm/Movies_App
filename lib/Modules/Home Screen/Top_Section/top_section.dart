@@ -1,5 +1,3 @@
-// lib/screens/top_section.dart
-
 import 'dart:math';
 import 'package:flutter/material.dart';
 
@@ -9,10 +7,10 @@ import '../../../shared/components/film_item.dart';
 import '../../../shared/styles/colors.dart';
 
 class TopSection extends StatefulWidget {
-  const TopSection({super.key});
+  const TopSection({Key? key}) : super(key: key);
 
   @override
-  _TopSectionState createState() => _TopSectionState();
+  State<TopSection> createState() => _TopSectionState();
 }
 
 class _TopSectionState extends State<TopSection> {
@@ -21,47 +19,46 @@ class _TopSectionState extends State<TopSection> {
   @override
   void initState() {
     super.initState();
-    _futureTopMovie = ApiService
-        .fetchPopular(page: 1)
-        .then((resp) => resp.results.first);
+    // fetch list and take the first (most popular)
+    _futureTopMovie = ApiService.fetchPopular(page: 1)
+        .then((list) => list.first);
   }
 
   @override
   Widget build(BuildContext context) {
-    // cap the background to 1/3 of screen height
     final screenH = MediaQuery.of(context).size.height;
-    final maxBgH = screenH / 3;
+    final maxBgHeight = screenH / 3;
 
     return FutureBuilder<Movie>(
       future: _futureTopMovie,
       builder: (ctx, snap) {
         if (snap.connectionState == ConnectionState.waiting) {
-          // placeholder size matches what our final layout will be
           return SizedBox(
-            height: maxBgH,
+            height: maxBgHeight,
             child: const Center(child: CircularProgressIndicator()),
           );
-        } else if (snap.hasError) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text('Error: ${snap.error}'),
+        }
+        if (snap.hasError) {
+          return SizedBox(
+            height: maxBgHeight,
+            child: Center(child: Text('Error: \${snap.error}')),
           );
         }
 
         final movie = snap.data!;
         final width = MediaQuery.of(context).size.width;
 
-        // compute background size
+        // background height with 16:9 ratio, capped at 1/3 screen
         const bgAspect = 16 / 9;
         final calcBgH = width / bgAspect;
-        final bgH = min(calcBgH, maxBgH);
+        final bgH = min(calcBgH, maxBgHeight);
 
-        // poster size is 60% of bg height, 2:3 ratio
-        const posterFraction = 0.6;
+        // poster: 60% of bg height, 2:3 ratio
+        const posterFrac = 0.6;
         const posterAspect = 2 / 3;
-        final posterH = bgH * posterFraction;
+        final posterH = bgH * posterFrac;
         final posterW = posterH * posterAspect;
-        final posterTop = bgH - (posterH / 2);
+        final posterTop = bgH - posterH / 2;
 
         return SizedBox(
           width: width,
