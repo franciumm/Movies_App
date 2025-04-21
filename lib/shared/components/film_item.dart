@@ -91,7 +91,7 @@ class _FilmItemState extends State<FilmItem> {
                 Container(
                   width: widget.width,
                   color: Recommended,
-                  padding: const EdgeInsets.fromLTRB(6, 4, 6, 4),
+                  padding:  EdgeInsets.fromLTRB(widget.width*0.04, widget.height*0.07,0, widget.height*0.07),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,7 +105,7 @@ class _FilmItemState extends State<FilmItem> {
                                 .colorScheme
                                 .secondary,
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: 3),
                           Text(
                             widget.rate.toString(),
                             style: const TextStyle(color: Colors.white),
