@@ -16,17 +16,19 @@ class MyThemeData {
               TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
           unselectedLabelStyle:
               TextStyle(fontWeight: FontWeight.bold, fontSize: 9)),
-      colorScheme: ColorScheme(
-          brightness: Brightness.light,
-          primary: PRIMARY_COLOR,
-          onPrimary: GREY_COLOR,
-          secondary: SEC_COLOR,
-          onSecondary: BtmNAVBck,
-          error: Colors.red,
-          onError: Colors.white,
-          background: PRIMARY_COLOR,
-          onBackground: GREY_COLOR,
-          surface: GREY_COLOR,
-          onSurface: PRIMARY_COLOR,onPrimaryContainer: TextBack),
+    colorScheme: ColorScheme(
+      brightness: Brightness.light,
+      primary: PRIMARY_COLOR,
+      onPrimary: GREY_COLOR,
+      secondary: SEC_COLOR,
+      onSecondary: BtmNAVBck,
+      background: PRIMARY_COLOR,              // used by colorScheme.background
+      onBackground: GREY_COLOR,
+      surface: GREY_COLOR,
+      onSurface: PRIMARY_COLOR,
+      error: Colors.red,
+      onError: Colors.white,
+      onPrimaryContainer: TextBack,
+    ),
  );
 }

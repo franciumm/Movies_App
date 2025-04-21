@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:movies/shared/styles/my_theme.dart';
 
 class SearchScreen extends StatelessWidget {
+  const SearchScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,11 +49,11 @@ class SearchScreen extends StatelessWidget {
                   'lib/assets/Photos/Icon material-local-movies.png',
                   filterQuality: FilterQuality.high,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Text('No Results',
-                    style: Theme.of(context).textTheme.headline1),
+                    style: Theme.of(context).textTheme.displayLarge),
               ],
             ),
           ),
