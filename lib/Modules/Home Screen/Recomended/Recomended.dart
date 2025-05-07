@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../../models/movie.dart';
 import '../../../services/api_services.dart';
@@ -29,8 +28,7 @@ class _RecommendedState extends State<Recommended> {
   Future<void> _loadMore() async {
     setState(() => _isLoading = true);
     try {
-      final newMovies =
-      await ApiService.fetchRecommended(page: _currentPage);
+      final newMovies = await ApiService.fetchRecommended(page: _currentPage);
       setState(() {
         if (newMovies.isEmpty) {
           _hasMore = false;
@@ -53,7 +51,7 @@ class _RecommendedState extends State<Recommended> {
     _loadMore();
     _scrollCtrl.addListener(() {
       if (_scrollCtrl.position.pixels >=
-          _scrollCtrl.position.maxScrollExtent - 200 &&
+          _scrollCtrl.position.maxScrollExtent - 70 &&
           !_isLoading && _hasMore) {
         _loadMore();
       }
@@ -114,6 +112,7 @@ class _RecommendedState extends State<Recommended> {
                     return FilmItem(
                       title: m.title,
                       time: m.releaseDate,
+                      movieId: m.id,
                       rate: m.voteAverage,
                       showInfo: true,
                       width: itemWidth,

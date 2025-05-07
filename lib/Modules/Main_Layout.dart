@@ -17,7 +17,7 @@ class _MainLayout extends State<MainLayout> {
   List<Widget> body = [
     HomeScreen(),
     SearchScreen(),
-    BrowseScreen(),
+    BrowseCategoriesScreen(),
     WatchListScreen()
   ];
   int selectedIndex = 0;

@@ -1,10 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-
+import 'package:auto_size_text/auto_size_text.dart';
 import '../../../models/movie.dart';
 import '../../../services/api_services.dart';
 import '../../../shared/components/film_item.dart';
-import '../../../shared/styles/colors.dart';
+
 
 class TopSection extends StatefulWidget {
   const TopSection({Key? key}) : super(key: key);
@@ -19,76 +19,85 @@ class _TopSectionState extends State<TopSection> {
   @override
   void initState() {
     super.initState();
-    // fetch list and take the first (most popular)
-    _futureTopMovie = ApiService.fetchPopular(page: 1)
-        .then((list) => list.first);
+    _futureTopMovie = ApiService.fetchPopular();
   }
 
   @override
   Widget build(BuildContext context) {
     final screenH = MediaQuery.of(context).size.height;
-    final maxBgHeight = screenH / 3;
+    final maxBgH = screenH / 3;
 
     return FutureBuilder<Movie>(
       future: _futureTopMovie,
-      builder: (ctx, snap) {
+      builder: (context, snap) {
         if (snap.connectionState == ConnectionState.waiting) {
           return SizedBox(
-            height: maxBgHeight,
+            height: maxBgH,
             child: const Center(child: CircularProgressIndicator()),
           );
-        }
-        if (snap.hasError) {
+        } else if (snap.hasError) {
           return SizedBox(
-            height: maxBgHeight,
-            child: Center(child: Text('Error: \${snap.error}')),
+            height: maxBgH,
+            child: const Center(child: Text('Error: \${snap.error}')),
           );
         }
 
         final movie = snap.data!;
         final width = MediaQuery.of(context).size.width;
 
-        // background height with 16:9 ratio, capped at 1/3 screen
         const bgAspect = 16 / 9;
         final calcBgH = width / bgAspect;
-        final bgH = min(calcBgH, maxBgHeight);
+        final bgH = min(calcBgH, maxBgH);
 
-        // poster: 60% of bg height, 2:3 ratio
         const posterFrac = 0.6;
         const posterAspect = 2 / 3;
         final posterH = bgH * posterFrac;
         final posterW = posterH * posterAspect;
-        final posterTop = bgH - posterH / 2;
+        final posterTop = bgH - (posterH / 2);
+
+        // Determine if backdrop URL is available
+        final hasBackdrop = movie.backdropPath.isNotEmpty;
+        final backdropUrl = hasBackdrop
+            ? movie.fullBackdropUrl
+            : null;
 
         return SizedBox(
           width: width,
-          height: bgH + (posterH / 2) + 16,
+          height: bgH + posterH / 2 + 16,
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              // background image + play icon + title overlaid
               SizedBox(
                 width: width,
                 height: bgH,
-                child: Stack(fit: StackFit.expand, children: [
-                  Image.network(
-                    movie.fullBackdropUrl,
-                    fit: BoxFit.cover,
-                  ),
-                  const Center(
-                    child: Icon(
-                      Icons.play_circle_outline,
-                      size: 64,
-                      color: Colors.white70,
-                    ),
-                  ),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // Backdrop or placeholder
+                    if (backdropUrl != null)
+                      Image.network(
+                        backdropUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => _bgPlaceholder(bgH),
+                      )
+                    else
+                      _bgPlaceholder(bgH),
 
-                ]),
+                    const Center(
+                      child: Icon(
+                        Icons.play_circle_outline,
+                        size: 64,
+                        color: Colors.white70,
+                      ),
+                    ),
+
+
+                  ],
+                ),
               ),
               Padding(
-                padding:  EdgeInsets.only(left: posterW*1.5),
+                padding:  EdgeInsets.only(left:posterW*1.5, top: bgH),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -97,10 +106,13 @@ class _TopSectionState extends State<TopSection> {
                           .textTheme
                           .titleLarge
                           ?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 1),
                     Text(
                       movie.releaseDate,
                       style: Theme.of(context)
@@ -108,10 +120,11 @@ class _TopSectionState extends State<TopSection> {
                           .bodyMedium
                           ?.copyWith(color: Colors.white70),
                     ),
+
                   ],
                 ),
               ),
-              // overlapping poster
+              // Overlapping poster
               Positioned(
                 left: 16,
                 top: posterTop,
@@ -121,6 +134,7 @@ class _TopSectionState extends State<TopSection> {
                   child: FilmItem(
                     title: movie.title,
                     time: movie.releaseDate,
+                    movieId: movie.id,
                     rate: movie.voteAverage,
                     showInfo: false,
                     width: posterW,
@@ -134,6 +148,21 @@ class _TopSectionState extends State<TopSection> {
           ),
         );
       },
+    );
+  }
+
+
+  Widget _bgPlaceholder(double height) {
+    return Container(
+      height: height,
+      color: Colors.grey[800],
+      child: const Center(
+        child: Icon(
+          Icons.image_not_supported,
+          size: 48,
+          color: Colors.white38,
+        ),
+      ),
     );
   }
 }
