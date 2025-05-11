@@ -14,11 +14,12 @@ class MainLayout extends StatefulWidget {
 }
 
 class _MainLayout extends State<MainLayout> {
+
   List<Widget> body = [
     HomeScreen(),
-    SearchScreen(),
-    BrowseCategoriesScreen(),
-    WatchListScreen()
+    const SearchScreen(),
+    const BrowseCategoriesScreen(),
+    const WishlistScreen()
   ];
   int selectedIndex = 0;
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../models/movie.dart';
 import '../../services/api_services.dart';
-import 'film_item.dart';
+import '../../models/watchlist_model.dart';
+import '../../shared/components/film_item.dart';
 
 class MovieDetailScreen extends StatelessWidget {
   final int movieId;
@@ -12,9 +14,25 @@ class MovieDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        title: const Text('Movie Info',style: TextStyle(color: Colors.white)),
+        title: const Text('Movie Info', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black87,
         leading: const BackButton(color: Colors.white),
+        actions: [
+          Consumer<WatchlistModel>(
+            builder: (ctx, watchlist, _) {
+              final inList = watchlist.contains(movieId);
+              return IconButton(
+                icon: Icon(
+                  inList ? Icons.bookmark : Icons.bookmark_border,
+                  color: Colors.white,
+                ),
+                onPressed: () => watchlist.toggle(movieId),
+                tooltip: inList ? 'Remove from Watchlist' : 'Add to Watchlist',
+              );
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: FutureBuilder<_MovieDetailData>(
         future: _fetchDetailData(),
@@ -33,36 +51,30 @@ class MovieDetailScreen extends StatelessWidget {
           final detail = snap.data!.movie;
           final similar = snap.data!.similar;
 
-          // Build a dynamic poster widget with fallback
-          Widget posterWidget;
-          if (detail.posterPath != null && detail.posterPath.isNotEmpty) {
-            posterWidget = Image.network(
-              'https://image.tmdb.org/t/p/w500${detail.posterPath}',
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => _placeholder(),
-            );
-          } else {
-            posterWidget = _placeholder();
-          }
+          // Poster widget
+          Widget poster = (detail.posterPath?.isNotEmpty ?? false)
+              ? Image.network(
+            'https://image.tmdb.org/t/p/w500${detail.posterPath}',
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => _placeholder(),
+          )
+              : _placeholder();
 
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Dynamic full-width poster with maintained aspect ratio
                 ClipRRect(
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(16),
                     bottomRight: Radius.circular(16),
                   ),
                   child: AspectRatio(
-                    aspectRatio: 2 / 3,  // adjust to your desired ratio
-                    child: posterWidget,
+                    aspectRatio: 2 / 3,
+                    child: poster,
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                // Title + rating row
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
@@ -91,8 +103,6 @@ class MovieDetailScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-
-                // Overview
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
@@ -104,8 +114,6 @@ class MovieDetailScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                // More Like This header
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
@@ -118,19 +126,12 @@ class MovieDetailScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-
-                // Similar movies as FilmItem list
                 LayoutBuilder(
                   builder: (ctx, constraints) {
-                    const itemsPerRow = 3;
-                    const hPad = 16.0;
-                    const minW = 100.0;
-                    const maxW = 140.0;
-                    const aspect = 2 / 3;
-
+                    const itemsPerRow = 3, hPad = 16.0;
+                    const minW = 100.0, maxW = 140.0, aspect = 2 / 3;
                     final totalGaps = (itemsPerRow + 1) * hPad;
-                    double itemW =
-                        (constraints.maxWidth - totalGaps) / itemsPerRow;
+                    double itemW = (constraints.maxWidth - totalGaps) / itemsPerRow;
                     itemW = itemW.clamp(minW, maxW);
                     final itemH = itemW / aspect;
                     final cardH = itemH * 1.3 + FilmItem.infoHeight(ctx);
@@ -139,10 +140,8 @@ class MovieDetailScreen extends StatelessWidget {
                       height: cardH,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: hPad),
-                        separatorBuilder: (_, __) =>
-                        const SizedBox(width: hPad),
+                        padding: const EdgeInsets.symmetric(horizontal: hPad),
+                        separatorBuilder: (_, __) => const SizedBox(width: hPad),
                         itemCount: similar.length,
                         itemBuilder: (_, i) {
                           final m = similar[i];
@@ -155,7 +154,6 @@ class MovieDetailScreen extends StatelessWidget {
                             width: itemW,
                             height: itemH,
                             imageUrl: m.fullPosterUrl,
-                            initialInWatchlist: false,
                           );
                         },
                       ),
@@ -171,7 +169,6 @@ class MovieDetailScreen extends StatelessWidget {
     );
   }
 
-  // Placeholder for missing/errored image
   Widget _placeholder() => Container(
     color: Colors.grey[800],
     child: const Center(

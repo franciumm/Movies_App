@@ -121,7 +121,7 @@ class _newrlesState extends State<newrles> {
                       width: itemWidth,
                       height: itemHeight,
                       imageUrl: m.fullPosterUrl,
-                      initialInWatchlist: false,
+
                     );
                   }
                   return SizedBox(

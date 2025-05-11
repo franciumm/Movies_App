@@ -118,7 +118,6 @@ class _RecommendedState extends State<Recommended> {
                       width: itemWidth,
                       height: itemHeight,
                       imageUrl: m.fullPosterUrl,
-                      initialInWatchlist: false,
                     );
                   } else {
                     // loading indicator at end

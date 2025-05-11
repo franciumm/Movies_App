@@ -140,7 +140,7 @@ class _TopSectionState extends State<TopSection> {
                     width: posterW,
                     height: posterH,
                     imageUrl: movie.fullPosterUrl,
-                    initialInWatchlist: false,
+
                   ),
                 ),
               ),
