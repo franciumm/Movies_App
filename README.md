@@ -6,4 +6,4 @@ A compelete recommendation Movies APP Using :
 App Live using 
 
 
-[![Watch the video](https://user-images.githubusercontent.com/88144060/192527481-c412e96b-7ebb-4db4-ab84-4a472a13be4b.png)](https://www.youtube.com/watch?v=6ueOiv8m2Yc)
+[![Watch the video](https://i.sstatic.net/Vp2cE.png)](https://www.youtube.com/watch?v=6ueOiv8m2Yc)
